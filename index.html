@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Archive of You</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Playfair Display', serif;
+      overflow-x: hidden;
+      height: 100vh;
+      background-color: #000;
+    }
+
+    /* OUTSIDE SCENE */
+    #outside-view {
+      position: fixed;
+      inset: 0;
+      z-index: 300;
+      background: linear-gradient(to bottom, #87ceeb 0%, #cbe9f6 55%, #e2d2b4 55%, #e2d2b4 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+
+    /* CLOUDS */
+    .cloud {
+      position: absolute;
+      background: #ffffff;
+      border-radius: 100px;
+      box-shadow: 0 8px 15px rgba(0,0,0,0.08);
+    }
+    .cloud::before, .cloud::after {
+      content: '';
+      position: absolute;
+      background: #ffffff;
+      border-radius: 50%;
+    }
+    .cloud-1 { width: 180px; height: 60px; top: 10%; left: 8%; }
+    .cloud-1::before { width: 80px; height: 80px; top: -40px; left: 25px; }
+    .cloud-1::after { width: 60px; height: 60px; top: -25px; right: 25px; }
+
+    .cloud-2 { width: 220px; height: 70px; top: 6%; right: 12%; }
+    .cloud-2::before { width: 90px; height: 90px; top: -45px; left: 35px; }
+    .cloud-2::after { width: 70px; height: 70px; top: -30px; right: 30px; }
+
+    .cloud-3 { width: 150px; height: 50px; top: 20%; left: 45%; }
+    .cloud-3::before { width: 60px; height: 60px; top: -30px; left: 20px; }
+    .cloud-3::after { width: 50px; height: 50px; top: -20px; right: 20px; }
+
+    /* WHITE BRICK BUILDING */
+    .building-wrapper {
+      position: relative;
+      width: 780px;
+      max-width: 90vw;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+
+    .roof {
+      width: 104%;
+      height: 0;
+      border-left: 60px solid transparent;
+      border-right: 60px solid transparent;
+      border-bottom: 85px solid #ff8da1;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+    }
+
+    .white-brick-wall {
+      position: relative;
+      width: 100%;
+      height: 380px;
+      background-color: #f7f7f7;
+      background-image: 
+        linear-gradient(335deg, #e0e0e0 6px, transparent 6px),
+        linear-gradient(155deg, #e0e0e0 6px, transparent 6px),
+        linear-gradient(335deg, #e0e0e0 6px, transparent 6px),
+        linear-gradient(155deg, #e0e0e0 6px, transparent 6px);
+      background-size: 58px 58px;
+      background-position: 0 2px, 4px 35px, 29px 31px, 33px 4px;
+      border: 6px solid #4a4a4a;
+      box-shadow: 0 12px 25px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .building-title {
+      font-family: 'Cinzel', serif;
+      font-size: 3rem;
+      font-weight: 800;
+      color: #ff69b4;
+      margin-top: 20px;
+      letter-spacing: 5px;
+      text-shadow: 2px 2px 0px #ffffff, -2px -2px 0px #ffffff, 2px -2px 0px #ffffff, -2px 2px 0px #ffffff, 3px 3px 5px rgba(0,0,0,0.3);
+    }
+
+    /* WINDOWS */
+    .windows-container {
+      position: absolute;
+      top: 100px;
+      width: 80%;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .pink-window {
+      width: 100px;
+      height: 120px;
+      background-color: #b0e0e6;
+      border: 6px solid #ff69b4;
+      border-top-left-radius: 50px;
+      border-top-right-radius: 50px;
+      position: relative;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    .window-cross {
+      position: absolute;
+      inset: 0;
+    }
+    .window-cross::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background-color: #ff69b4;
+    }
+    .window-cross::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background-color: #ff69b4;
+    }
+
+    /* PINK DOORS */
+    .pink-door {
+      position: absolute;
+      bottom: 0;
+      width: 180px;
+      height: 220px;
+      background-color: #ff1493;
+      border: 6px solid #ff69b4;
+      border-top-left-radius: 90px;
+      border-top-right-radius: 90px;
+      display: flex;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .door-panel {
+      width: 50%;
+      height: 100%;
+      border: 2px solid #ff69b4;
+      position: relative;
+    }
+
+    .knob {
+      position: absolute;
+      top: 55%;
+      width: 12px;
+      height: 12px;
+      background-color: #ffd700;
+      border-radius: 50%;
+      border: 1px solid #b8860b;
+    }
+    .door-panel.left .knob { right: 8px; }
+    .door-panel.right .knob { left: 8px; }
+
+    .enter-btn {
+      position: absolute;
+      bottom: -25px;
+      background-color: #ff69b4;
+      border: 3px solid #ffffff;
+      padding: 10px 24px;
+      border-radius: 20px;
+      font-family: 'Cinzel', serif;
+      font-weight: bold;
+      color: #ffffff;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      z-index: 10;
+    }
+
+    /* CHARACTER STICKER */
+    .character-sticker {
+      position: absolute;
+      bottom: 10px;
+      z-index: 100;
+      height: 320px;
+      filter: drop-shadow(4px 8px 12px rgba(0,0,0,0.4));
+      pointer-events: none;
+    }
+
+    .character-sticker.outside { left: calc(50% - 360px); }
+    .character-sticker.inside { position: fixed; left: 40px; bottom: 20px; }
+
+    /* INSIDE GALLERY ROOM */
+    #gallery-room {
+      position: fixed;
+      inset: 0;
+      background: url('wall.png') center/cover repeat;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
+    .floor-image {
+      width: 100%;
+      height: 26vh;
+      background: url('floor.png') center/cover repeat;
+      border-top: 4px solid #1a0a00;
+      box-shadow: inset 0 15px 25px rgba(0,0,0,0.6);
+    }
+
+    .gallery-container {
+      position: absolute;
+      top: 0;
+      bottom: 26vh;
+      left: 0;
+      right: 0;
+      display: flex;
+      align-items: center;
+      gap: 100px;
+      padding: 0 100px 0 280px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      z-index: 10;
+    }
+
+    .art-card {
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .art-card:hover { transform: translateY(-8px); }
+
+    .frame-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+
+    .frame-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .art-img {
+      display: block;
+      width: 320px;
+      height: 400px;
+      object-fit: cover;
+      position: relative;
+      z-index: 1;
+      padding: 25px;
+    }
+
+    /* PLAQUE / TITLE TAG */
+    .plaque-wrapper {
+      position: relative;
+      margin-top: 15px;
+      width: 200px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .plaque-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      object-fit: contain;
+    }
+
+    .plaque-text {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      color: #2b1d01;
+      padding: 4px 10px;
+    }
+
+    .plaque-text h3 {
+      font-family: 'Cinzel', serif;
+      font-size: 0.9rem;
+      font-weight: bold;
+    }
+
+    .plaque-text span { font-size: 0.75rem; font-weight: 600; }
+
+    /* POPUP STORY MODAL */
+    .modal {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(10, 2, 3, 0.94);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 50px;
+      padding: 40px;
+      z-index: 400;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    .modal.active { opacity: 1; pointer-events: auto; }
+
+    .modal-frame { position: relative; max-width: 45%; max-height: 80vh; }
+
+    .modal-frame img {
+      display: block;
+      max-width: 100%;
+      max-height: 75vh;
+      object-fit: contain;
+      border: 4px solid #fff;
+      box-shadow: 0 0 30px rgba(0,0,0,0.8);
+    }
+
+    .modal-details { max-width: 450px; color: #fff; }
+    .modal-details h2 { font-family: 'Cinzel', serif; font-size: 2.2rem; color: #f7e1a1; margin-bottom: 5px; }
+    .modal-details .date { color: #d4af37; font-size: 1rem; margin-bottom: 20px; }
+    .modal-details p { line-height: 1.8; color: #f2e3e5; margin-bottom: 30px; font-size: 1.1rem; }
+
+    .back-btn {
+      background: transparent;
+      border: 2px solid #f7e1a1;
+      color: #f7e1a1;
+      padding: 10px 24px;
+      cursor: pointer;
+      font-family: 'Cinzel', serif;
+      border-radius: 20px;
+    }
+    .back-btn:hover { background: #f7e1a1; color: #3d1014; }
+
+    /* AUDIO CONTAINER */
+    .audio-player-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 500;
+      background: rgba(255, 182, 193, 0.9);
+      padding: 8px 12px;
+      border-radius: 30px;
+      border: 2px solid #ff69b4;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    }
+    .audio-player-container audio { height: 32px; outline: none; }
+  </style>
+</head>
+<body>
+
+  <div id="outside-view">
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+    <div class="cloud cloud-3"></div>
+
+    <div class="building-wrapper" onclick="enterMuseum()">
+      <div class="roof"></div>
+      
+      <div class="white-brick-wall">
+        <div class="building-title">MUSEUM</div>
+        
+        <div class="windows-container">
+          <div class="pink-window left"><div class="window-cross"></div></div>
+          <div class="pink-window right"><div class="window-cross"></div></div>
+        </div>
+
+        <div class="pink-door">
+          <div class="door-panel left"><div class="knob"></div></div>
+          <div class="door-panel right"><div class="knob"></div></div>
+        </div>
+      </div>
+
+      <button class="enter-btn">ENTER THE GALLERY</button>
+    </div>
+
+    <img src="girl.png" class="character-sticker outside" alt="Character" />
+  </div>
+
+  <div id="gallery-room">
+    <img src="girl.png" class="character-sticker inside" alt="Character" />
+
+    <div class="gallery-container">
+      
+      <div class="art-card" onclick="openStory('First Memory', '2026', 'Write your story here...', 'art1.png')">
+        <div class="frame-wrapper">
+          <img src="frame.png" class="frame-img" alt="Frame" />
+          <img src="art1.png" class="art-img" alt="Artwork 1" />
+        </div>
+        <div class="plaque-wrapper">
+          <img src="plaque.png" class="plaque-bg" alt="Plaque" />
+          <div class="plaque-text">
+            <h3>First Memory</h3>
+            <span>2026</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="art-card" onclick="openStory('Second Memory', '2026', 'Write your story here...', 'art2.png')">
+        <div class="frame-wrapper">
+          <img src="frame.png" class="frame-img" alt="Frame" />
+          <img src="art2.png" class="art-img" alt="Artwork 2" />
+        </div>
+        <div class="plaque-wrapper">
+          <img src="plaque.png" class="plaque-bg" alt="Plaque" />
+          <div class="plaque-text">
+            <h3>Second Memory</h3>
+            <span>2026</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="art-card" onclick="openStory('Third Memory', '2026', 'Write your story here...', 'art3.png')">
+        <div class="frame-wrapper">
+          <img src="frame.png" class="frame-img" alt="Frame" />
+          <img src="art3.png" class="art-img" alt="Artwork 3" />
+        </div>
+        <div class="plaque-wrapper">
+          <img src="plaque.png" class="plaque-bg" alt="Plaque" />
+          <div class="plaque-text">
+            <h3>Third Memory</h3>
+            <span>2026</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="art-card" onclick="openStory('Fourth Memory', '2026', 'Write your story here...', 'art4.png')">
+        <div class="frame-wrapper">
+          <img src="frame.png" class="frame-img" alt="Frame" />
+          <img src="art4.png" class="art-img" alt="Artwork 4" />
+        </div>
+        <div class="plaque-wrapper">
+          <img src="plaque.png" class="plaque-bg" alt="Plaque" />
+          <div class="plaque-text">
+            <h3>Fourth Memory</h3>
+            <span>2026</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="art-card" onclick="openStory('Fifth Memory', 'Forever', 'Write your story here...', 'art5.png')">
+        <div class="frame-wrapper">
+          <img src="frame.png" class="frame-img" alt="Frame" />
+          <img src="art5.png" class="art-img" alt="Artwork 5" />
+        </div>
+        <div class="plaque-wrapper">
+          <img src="plaque.png" class="plaque-bg" alt="Plaque" />
+          <div class="plaque-text">
+            <h3>Fifth Memory</h3>
+            <span>Forever</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="floor-image"></div>
+  </div>
+
+  <div class="modal" id="storyModal">
+    <div class="modal-frame">
+      <img id="modalImg" src="" alt="Painting Large" />
+    </div>
+    <div class="modal-details">
+      <h2 id="modalTitle">Title</h2>
+      <div class="date" id="modalDate">Date</div>
+      <p id="modalStory">Story text goes here...</p>
+      <button class="back-btn" onclick="closeStory()">← BACK TO GALLERY</button>
+    </div>
+  </div>
+
+  <div class="audio-player-container">
+    <audio id="bgAudio" controls loop src="song.mp3"></audio>
+  </div>
+
+  <script>
+    function enterMuseum() {
+      const outsideView = document.getElementById('outside-view');
+      const audio = document.getElementById('bgAudio');
+      
+      audio.play().catch(e => console.log("Audio autoplay waiting for user interaction:", e));
+      
+      outsideView.style.opacity = '0';
+      outsideView.style.visibility = 'hidden';
+    }
+
+    function openStory(title, date, story, imgSrc) {
+      document.getElementById('modalTitle').innerText = title;
+      document.getElementById('modalDate').innerText = date;
+      document.getElementById('modalStory').innerText = story;
+      document.getElementById('modalImg').src = imgSrc;
+      document.getElementById('storyModal').classList.add('active');
+    }
+
+    function closeStory() {
+      document.getElementById('storyModal').classList.remove('active');
+    }
+  </script>
+</body>
+</html>
